@@ -1,0 +1,134 @@
+[![Build And Tests](https://github.com/jmsilvadev/golangtechtask/actions/workflows/tests.yml/badge.svg)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/tests.yml)
+[![Quality](https://github.com/jmsilvadev/golangtechtask/actions/workflows/quality.yml/badge.svg)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/quality.yml)
+[![Release](https://github.com/jmsilvadev/golangtechtask/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/release.yml)
+
+## Introduction
+
+The main focus in the app design was to provide a clear solution with a consumer focus and a code with quality and estability, this means that it should provide a clear and simple solution to use. To achieve this, the SOLID (SRP, OCP, ISP and DIP) was followed, all the business logic was encapsulated in the pkg folder, having public visibility only of the methods that the consumer needs to use. Also were used the repository pattern and depency injection to grant the extensibility, reusability and facilitate the unit tests. To grant the quality was use tools of code style and automated tests with almost 100% of coverage and tests scenarios to prevent known and minimize unkown flaws.
+
+## Tasks Done
+
+- [x] Provide a `Go` implementation of the `GRPC` service in the `cmd/` directory of this repo.
+- [x] Implement a `DynamoDB` based store for this `GRPC` service
+- [x] Add pagination to the `ListVoteables` RPC call
+- [x] Provide adequate test coverage for this simple service
+
+1. [x] Adding Observability 
+
+    Adding structured logging and/or tracing and metrics.
+    (The current tech used should be considered when choosing technologies)
+    - Used uber-go/zap to create structured logs and override the default log.
+
+2. [x] Adding Configuration and Secrets management
+    - Created a config package that handle the environments variables and injects in the server.
+
+## CI/CD And SemVer
+
+The project uses the Devops concept of continuous integration and continuous delivery through pipelines. To guarantee the CI there is a check inside the pipelines that checks the code quality and runs all the tests. This process generates an artifact that can be viewed and analyzed by developers.
+
+To ensure the continuous delivery, the pipeline uses the automatic semantic versioning creating a versioned realease after each merge in the branch master. This release are tags in the control version system.
+
+The semver system uses the angular commit message model [Angular Commit Message Format](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format).
+
+## Usage
+
+### Containerization
+
+The project uses the concept of containerization which means that all the application is under dockers containers. To manipulate these containers please use the helpers showed in the next topic below.
+
+### Helper
+
+To facilitate the developers' work, a Makefile with containerized commands was created.
+
+```bash
+$ make
+build                          Build docker image in daemon mode
+cert                           Build a certificate to use with ssl
+deps                           Install dependencies
+doc                            Show package documentation
+down                           Stop docker container
+fmt                            Applies standard formatting
+go-build                       Build a new binary server
+lint                           Checks Code Style
+logs                           Watch docker log files
+proto                          Generate protobuffers
+rebuild                        Rebuild docker container
+ssh                            Interactive access to container
+test.api                       Run end to end tests
+test.coverage                  Run all available tests in a separate conteiner with coverage
+test                           Run all available tests
+tidy                           Dowload and Clean dependencies
+up                             Start docker container
+vendor                         Install vendor
+vet                            Finds issues in code
+
+```
+
+### Configuration
+
+The configuration of the application in under the file `docker-compose.yml`. Inside this file you can configure a serie of the environment variables like server port, aws credentials, etc.
+
+### Build The Containers
+
+To start the use of this application you need to build the images, to do this run the command:
+
+```bash
+$ make build
+
+``` 
+
+### Start The Server
+
+To start the server run the command:
+```bash
+$ make up
+
+``` 
+
+After that, the server will be up and listen in the port configured in the config file.
+
+### Tests
+
+The project has unit tests, integration tests and end to end tests. To run these tests:
+- Unit and Integration with coverage `make test.coverage`
+- Unit and Integration `make test`
+- End to End `make test.api`
+
+***
+
+# Golang Tech Test
+
+As part of the recruitment process we want to know how you think, code and structure your work.
+In order to do that, we're going to ask you to complete this coding challenge.
+
+**Please do not spend more than 5 hours on this task**, as this would not be
+respectful of your time.
+
+**Please do not submit work as a PR as these are publicly visible**
+
+## Task
+
+In the `api/` folder of this repo there is a basic `grpc` service definition for a voting service.
+This service contains RPCs for creating, listing and voting on `voteable` items.
+
+There is also a "hello world" go application in `cmd/` and a `docker-compose.yml` for running
+`Amazon DynamoDB` locally.
+
+We need you to:
+
+- Provide a `Go` implementation of the `GRPC` service in the `cmd/` directory of this repo.
+- Implement a `DynamoDB` based store for this `GRPC` service
+- Add pagination to the `ListVoteables` RPC call
+- Provide adequate test coverage for this simple service
+
+
+## How to impress us
+
+There are a few optional tasks you can complete if you really want to show off.
+
+1. Adding Observability 
+
+    Adding structured logging and/or tracing and metrics.
+    (The current tech used should be considered when choosing technologies)
+
+2. Adding Configuration and Secrets management
