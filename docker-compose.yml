@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  app:
+    build: ./
+    container_name: GolangTechTask
+    entrypoint: ./run-server.sh
+    depends_on:
+      - dynamodb-local
+    ports:
+     - "4000:4000"
+    volumes:
+      - ${PWD}/app:/app
+    environment:
+      SERVER_PORT: ':4000'
+      TIMEOUT: '1000ms'
+      AWS_ENDPOINT: 'http://dynamodb-local:8000'
+      AWS_REGION: 'us-west-2'
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+  dynamodb-local:
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+  app-node:
+    depends_on:
+      - dynamodb-local
+    image: banst/awscli
+    container_name: app-node
+    ports:
+     - "8080:8080"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+    command:
+      dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2

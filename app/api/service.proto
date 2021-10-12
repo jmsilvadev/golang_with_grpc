@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "github.com/jmsilvadev/golangtechtask/api";
+
+service VotingService {
+  rpc CreateVoteable(CreateVoteableRequest) returns (CreateVoteableResponse) {}
+  rpc ListVoteables(ListVoteableRequest) returns (ListVoteableResponse) {}
+  rpc CastVote(CastVoteRequest) returns (CastVoteResponse) {}
+}
+
+message Voteable {
+  string UUID = 1;
+  string question = 2;
+  repeated string answers = 3;
+  map<string, int64> votes = 4;
+}
+
+message CreateVoteableRequest {
+  string question = 1;
+  repeated string answers = 2;
+}
+
+message CreateVoteableResponse {
+  string UUID = 1;
+}
+
+message ListVoteableRequest { 
+  int64 PageSize = 1;
+  string Page = 2;
+}
+
+message ListVoteableResponse {
+  string Page = 1;
+  string NextPage = 2;
+  string PreviousPage = 3;
+  repeated Voteable votables = 4;
+}
+
+message CastVoteRequest {
+  string UUID = 1;
+  int64 answer_index = 2;
+}
+
+message CastVoteResponse {
+  string answer = 1;
+  int64 answer_votes = 2;
+}
