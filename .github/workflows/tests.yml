@@ -1,0 +1,40 @@
+name: Build And Tests
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Server
+      run: docker-compose run --entrypoint="./run-build-server.sh" app
+      
+  UnitTests:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Test
+      run: docker-compose run --entrypoint="./run-tests-coverage.sh" app
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: tests-artifact
+        path: pkg/tests/coverage/coverage.html
+
+  E2ETests:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Test
+      run: docker-compose run --entrypoint="./run-buildandtests.sh" app
+

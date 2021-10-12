@@ -1,0 +1,22 @@
+name: Quality
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+
+  CodeQuality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Lint
+      run: docker-compose run --entrypoint="./run-lint.sh" app
+
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: code-quality-artifact
+        path: pkg/tests/outputs/output_lint.log
