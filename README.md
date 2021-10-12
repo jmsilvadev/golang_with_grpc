@@ -6,6 +6,8 @@
 
 The main focus in the app design was to provide a clear solution with a consumer focus and a code with quality and estability, this means that it should provide a clear and simple solution to use. To achieve this, the SOLID (SRP, OCP, ISP and DIP) was followed, all the business logic was encapsulated in the pkg folder, having public visibility only of the methods that the consumer needs to use. Also were used the repository pattern and depency injection to grant the extensibility, reusability and facilitate the unit tests. To grant the quality was use tools of code style and automated tests with almost 100% of coverage and tests scenarios to prevent known and minimize unkown flaws.
 
+I did a 5 minute video to explain the app: [Five Minutes Video](https://www.loom.com/share/76381a7f7df3453bb9a9d22542498c03)
+
 ## Tasks Done
 
 - [x] Provide a `Go` implementation of the `GRPC` service in the `cmd/` directory of this repo.
@@ -93,6 +95,213 @@ The project has unit tests, integration tests and end to end tests. To run these
 - Unit and Integration with coverage `make test.coverage`
 - Unit and Integration `make test`
 - End to End `make test.api`
+
+#### Testing Manually
+
+You can use the `grpcurl` to test manually the application. Follow some hints:
+
+##### To create a Votable:
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key --insecure -d '{"question":"What is the best football team in the universe?", "answers":["Flamengo","Arsenal","Chelsea", "Liverpool", "Manchester","Manchester City"]}' -proto app/api/service.proto localhost:4000 VotingService/CreateVoteable
+
+Response contents:
+{
+  "UUID": "b5054e8b-ea55-480f-b272-0be1e7bdd6a9"
+}
+
+```
+
+##### To cast a vote (use the response above)
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -d '{"UUID":"b5054e8b-ea55-480f-b272-0be1e7bdd6a9","answer_index":0}' -proto app/api/service.proto localhost:4000 VotingService/CastVote
+
+Response contents:
+{
+  "answer": "Flamengo",
+  "answerVotes": "1"
+}
+```
+
+Again :)
+
+```bash
+
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -d '{"UUID":"b5054e8b-ea55-480f-b272-0be1e7bdd6a9","answer_index":0}' -proto app/api/service.proto localhost:4000 VotingService/CastVote
+
+Response contents:
+{
+  "answer": "Flamengo",
+  "answerVotes": "2"
+}
+
+```
+
+Ok, one more time :P
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -d '{"UUID":"b5054e8b-ea55-480f-b272-0be1e7bdd6a9","answer_index":0}' -proto app/api/service.proto localhost:4000 VotingService/CastVote
+
+Response contents:
+{
+  "answer": "Flamengo",
+  "answerVotes": "3"
+}
+
+```
+
+##### To list all votables
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -proto app/api/service.proto localhost:4000 VotingService/ListVoteables
+
+Response contents:
+{
+  "PreviousPage": "eyJVVUlEIjoiYjUwNTRlOGItZWE1NS00ODBmLWIyNzItMGJlMWU3YmRkNmE5In0=",
+  "votables": [
+    {
+      "UUID": "b5054e8b-ea55-480f-b272-0be1e7bdd6a9",
+      "question": "What is the best football team in the universe?",
+      "answers": [
+        "Flamengo",
+        "Arsenal",
+        "Chelsea",
+        "Liverpool",
+        "Manchester",
+        "Manchester City"
+      ],
+      "votes": {
+        "0": "3",
+        "1": "0",
+        "2": "0",
+        "3": "0",
+        "4": "0",
+        "5": "0"
+      }
+    }
+  ]
+}
+```
+
+Question: Who is the best football team? :D
+
+##### To list all votables with page size
+
+Before we need to create more votables. Please return the creation section and create some votables.
+
+Then, put a size as input to PageSize parameter (note: the order of votables is by creation desc):
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -d '{"PageSize": 2}' -proto app/api/service.proto localhost:4000 VotingService/ListVoteables
+
+Response contents:
+{
+  "NextPage": "eyJVVUlEIjoiNzQyNjZiYzgtNDUwNC00ODcwLWIxNmUtNjVmZmZjNjZlMjE5In0=",
+  "PreviousPage": "eyJVVUlEIjoiMGE2MzFlNjYtY2Y4Ni00Njg5LTlhMDYtNDUzMDNlNDAwYTJmIn0=",
+  "votables": [
+    {
+      "UUID": "0a631e66-cf86-4689-9a06-45303e400a2f",
+      "question": "What is the best football team in the universe?",
+      "answers": [
+        "Flamengo",
+        "Arsenal",
+        "Chelsea",
+        "Liverpool",
+        "Manchester",
+        "Manchester City"
+      ],
+      "votes": {
+        "0": "0",
+        "1": "0",
+        "2": "0",
+        "3": "0",
+        "4": "0",
+        "5": "0"
+      }
+    },
+    {
+      "UUID": "74266bc8-4504-4870-b16e-65fffc66e219",
+      "question": "What is the best football team in the universe?",
+      "answers": [
+        "Flamengo",
+        "Arsenal",
+        "Chelsea",
+        "Liverpool",
+        "Manchester",
+        "Manchester City"
+      ],
+      "votes": {
+        "0": "0",
+        "1": "0",
+        "2": "0",
+        "3": "0",
+        "4": "0",
+        "5": "0"
+      }
+    }
+  ]
+}
+
+```
+
+##### To list all votables with page size and pagination
+
+Use the PreviousPage or NextPage tokens as input to Page parameter:
+
+```bash
+grpcurl -v --cert app/certs/server.crt --key app/certs/server.key  --insecure -d '{"PageSize": 2, "Page": "eyJVVUlEIjoiNzQyNjZiYzgtNDUwNC00ODcwLWIxNmUtNjVmZmZjNjZlMjE5In0="}' -proto app/api/service.proto localhost:4000 VotingService/ListVoteables
+
+Response contents:
+{
+  "Page": "eyJVVUlEIjoiNzQyNjZiYzgtNDUwNC00ODcwLWIxNmUtNjVmZmZjNjZlMjE5In0=",
+  "NextPage": "eyJVVUlEIjoiYjAyNTliYzMtNjg5Ni00OTBjLWIxM2YtNDk1NGExMWEwYjY0In0=",
+  "PreviousPage": "eyJVVUlEIjoiMDRmZWVjNmUtYmUzYi00N2RlLWEwYmYtMmM5ZmRjZjlkZTZjIn0=",
+  "votables": [
+    {
+      "UUID": "04feec6e-be3b-47de-a0bf-2c9fdcf9de6c",
+      "question": "What is the best football team in the universe?",
+      "answers": [
+        "Flamengo",
+        "Arsenal",
+        "Chelsea",
+        "Liverpool",
+        "Manchester",
+        "Manchester City"
+      ],
+      "votes": {
+        "0": "0",
+        "1": "0",
+        "2": "0",
+        "3": "0",
+        "4": "0",
+        "5": "0"
+      }
+    },
+    {
+      "UUID": "b0259bc3-6896-490c-b13f-4954a11a0b64",
+      "question": "What is the best football team in the universe?",
+      "answers": [
+        "Flamengo",
+        "Arsenal",
+        "Chelsea",
+        "Liverpool",
+        "Manchester",
+        "Manchester City"
+      ],
+      "votes": {
+        "0": "0",
+        "1": "0",
+        "2": "0",
+        "3": "0",
+        "4": "0",
+        "5": "0"
+      }
+    }
+  ]
+}
+
+```
 
 ***
 
