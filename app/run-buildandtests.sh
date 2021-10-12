@@ -8,6 +8,10 @@ if [ ! -d tests/outputs/ ]; then
     mkdir tests/outputs/
 fi
 
+if [ ! -f ./bin/server ]; then
+    go build -o bin/server cmd/main.go
+fi
+
 ./bin/server&
 
 cd tests
