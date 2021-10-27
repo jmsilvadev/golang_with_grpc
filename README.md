@@ -6,8 +6,6 @@
 
 The main focus in the app design was to provide a clear solution with a consumer focus and a code with quality and estability, this means that it should provide a clear and simple solution to use. To achieve this, the SOLID (SRP, OCP, ISP and DIP) was followed, all the business logic was encapsulated in the pkg folder, having public visibility only of the methods that the consumer needs to use. Also were used the repository pattern and depency injection to grant the extensibility, reusability and facilitate the unit tests. To grant the quality was use tools of code style and automated tests with almost 100% of coverage and tests scenarios to prevent known and minimize unkown flaws.
 
-I did a 5 minute video to explain the app: [Five Minutes Video](https://www.loom.com/share/76381a7f7df3453bb9a9d22542498c03)
-
 ## Tasks Done
 
 - [x] Provide a `Go` implementation of the `GRPC` service in the `cmd/` directory of this repo.
