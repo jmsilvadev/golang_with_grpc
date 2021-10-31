@@ -20,8 +20,8 @@ down: ## Stop docker container
 	$(DOCKER_C) down --remove-orphans
 
 ssh: ## Interactive access to container
-	$(DOCKER_C) up -d
-	$(DOCK_X_APP) /bin/sh
+	$(DOCKER_RUN) --entrypoint="/bin/sh" $(APP_NAME)
+	$(DOCKER_C) down --remove-orphans
 
 deps: ## Install dependencies
 	$(DOCKER_C) up -d

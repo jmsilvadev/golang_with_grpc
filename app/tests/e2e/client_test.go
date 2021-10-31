@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/jmsilvadev/golangtechtask/api"
@@ -32,8 +31,7 @@ func TestCreateVoteable(t *testing.T) {
 		port = ":4000"
 	}
 
-	pathToCert, _ := filepath.Abs("../../certs")
-	creds, err := credentials.NewClientTLSFromFile(pathToCert+"/server.crt", "")
+	creds, err := credentials.NewClientTLSFromFile("/certs/server.crt", "")
 	if err != nil {
 		log.Fatal(err)
 	}
