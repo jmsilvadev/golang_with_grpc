@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -9,7 +8,6 @@ import (
 	"os/signal"
 	"path/filepath"
 	"syscall"
-	"time"
 
 	"github.com/jmsilvadev/golangtechtask/api"
 	"github.com/jmsilvadev/golangtechtask/pkg/config"
@@ -21,12 +19,11 @@ import (
 func main() {
 	config := config.GetDeaultConfig()
 	StartServer(*config)
-
 	log.Println("Shutting down service")
 }
 
 // StartServer starts a new gRPC server with TLS
-func StartServer(config config.Config) context.Context {
+func StartServer(config config.Config) {
 	lis, err := net.Listen("tcp", config.ServerPort)
 	if err != nil {
 		config.Logger.Fatal("failed to listen: " + err.Error())
@@ -58,13 +55,9 @@ func StartServer(config config.Config) context.Context {
 	sig := <-gracefulStop
 	config.Logger.Warn("received a system call " + fmt.Sprint(sig))
 
-	ctx, cancel := context.WithTimeout(config.Context, 5*time.Second)
-	defer cancel()
-
 	defer func() {
 		s.GracefulStop()
 		config.Logger.Info("clean shutdown")
 	}()
 
-	return ctx
 }
