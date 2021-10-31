@@ -2,6 +2,7 @@ FROM golang:1.17-alpine
 ENV CGO_ENABLED 0
 RUN mkdir /app
 COPY app/. /app
+COPY certs/. /certs
 WORKDIR /app
 
 RUN apk update && apk add --upgrade protobuf-dev git openssh
@@ -14,5 +15,7 @@ RUN go get -u golang.org/x/lint/golint && \
     go get -u go.uber.org/zap && \
     go mod download && \
     go mod tidy && \
-    go mod vendor
+    go mod vendor && \
+    ./run-build-server.sh
+
 ENTRYPOINT ./run-server.sh

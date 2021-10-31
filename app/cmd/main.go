@@ -6,7 +6,6 @@ import (
 	"net"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 
 	"github.com/jmsilvadev/golangtechtask/api"
@@ -29,8 +28,7 @@ func StartServer(config config.Config) {
 		config.Logger.Fatal("failed to listen: " + err.Error())
 	}
 
-	pathToCert, _ := filepath.Abs("certs")
-	creds, err := credentials.NewServerTLSFromFile(pathToCert+"/server.crt", pathToCert+"/server.key")
+	creds, err := credentials.NewServerTLSFromFile("/certs/server.crt", "/certs/server.key")
 	if err != nil {
 		config.Logger.Fatal(err.Error())
 	}
