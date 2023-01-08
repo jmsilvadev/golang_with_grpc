@@ -1,6 +1,7 @@
 [![Build And Tests](https://github.com/jmsilvadev/golangtechtask/actions/workflows/tests.yml/badge.svg)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/tests.yml)
 [![Quality](https://github.com/jmsilvadev/golangtechtask/actions/workflows/quality.yml/badge.svg)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/quality.yml)
 [![Release](https://github.com/jmsilvadev/golangtechtask/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/jmsilvadev/golangtechtask/actions/workflows/release.yml)
+![Coverage Badge](https://github.com/jmsilvadev/golang_with_grpc/badge.svg)
 
 ## Introduction
 
