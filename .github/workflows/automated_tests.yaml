@@ -30,7 +30,7 @@ jobs:
           git config user.name infura-github-actions
           git config user.email infura-github-actions@users.noreply.github.com
           git add cur-coverage.svg
-          git commit -m "fix(ci): Add code coverage report"
+          git commit -m "fix(ci): Add code coverage report" || echo "allways true"
           git push
       - name: Package Low Coverage
         if: ${{ env.PER_COVER < 80 }}
