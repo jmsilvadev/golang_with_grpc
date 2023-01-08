@@ -1,0 +1,36 @@
+# yamllint disable rule:line-length rule:comments-indentation rule:comments
+---
+name: Coverage Tests
+
+'on':
+  pull_request:
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+          check-latest: true
+      - name: Test Build
+        run: |
+          cd app
+          go mod tidy
+      - name: Package Unit Tests
+        run: |
+          echo "PER_COVER=90" >> $GITHUB_ENV
+      - name: Generate Badge
+        run: |
+          curl https://img.shields.io/badge/coverage-${{ env.PER_COVER }}%25-yellowgreen > badge.svg
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add badge.svg
+          git commit -m "fix(ci): Add code coverage report"
+          git push
+      - name: Package Low Coverage
+        if: ${{ env.PER_COVER < 75 }}
+        run: exit(1)
