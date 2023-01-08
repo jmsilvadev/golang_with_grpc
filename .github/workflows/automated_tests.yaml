@@ -22,7 +22,7 @@ jobs:
           go mod tidy
       - name: Package Unit Tests
         run: |
-          echo "PER_COVER=91" >> $GITHUB_ENV
+          echo "PER_COVER=95" >> $GITHUB_ENV
       - name: Generate Badge
         if: always()
         run: |
