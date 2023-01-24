@@ -3,13 +3,12 @@
 name: Coverage Tests and Bagde Generation
 
 on:
-  push:
-   branches:
-     - main
-     - master
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   test-suite:
+    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     env:
       MIN_COVER: 80
@@ -39,27 +38,27 @@ jobs:
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com
           git add -A
-          git commit -m "chore(badge): Add code coverage report" || echo "allways true"
-          #git push origin update-badges
-      - name: Create Pull Request
-        id: pr-badges
-        uses: peter-evans/create-pull-request@v4
-        with:
-          title: '[skip ci] Update report'
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: update-badges
-          delete-branch: true
-          draft: false
-      - name: Approve Pull Request
-        uses: juliangruber/approve-pull-request-action@v2.0.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.pr-badges.outputs.pull-request-number }}
-      - name: Merge Pull Request
-        uses: juliangruber/merge-pull-request-action@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.pr-badges.outputs.pull-request-number }}
-          method: squash
+          git commit -m "[skip ci] chore(badge): Add code coverage report" || echo "allways true"
+          git push
+      #- name: Create Pull Request
+      #  id: pr-badges
+      #  uses: peter-evans/create-pull-request@v4
+      #  with:
+      #    title: '[skip ci] Update report'
+      #    committer: GitHub <noreply@github.com>
+      #    author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+      #    branch: update-badges
+      #    delete-branch: true
+      #    draft: false
+      #- name: Approve Pull Request
+      #  uses: juliangruber/approve-pull-request-action@v2.0.0
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      #    number: ${{ steps.pr-badges.outputs.pull-request-number }}
+      #- name: Merge Pull Request
+      #  uses: juliangruber/merge-pull-request-action@v1
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      #    number: ${{ steps.pr-badges.outputs.pull-request-number }}
+      #    method: squash
 
