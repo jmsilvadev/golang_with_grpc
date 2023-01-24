@@ -33,7 +33,6 @@ jobs:
       #    make clean-tests
 
       - name: Generate Badge
-        if: always()
         run: |
           git checkout -b update-badges
           curl https://img.shields.io/badge/minimum_coverage-${{ env.MIN_COVER }}%25-yellowgreen > min-coverage.svg
@@ -59,3 +58,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.find-pull-request.outputs.number }}
           method: squash
+      - name: Delete Branch
+        if: always()
+        run: git push origin --delete update-badges
