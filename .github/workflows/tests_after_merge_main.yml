@@ -45,8 +45,6 @@ jobs:
         id: pr-badges
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: update-badges
-          delete-branch: true
           title: '[skip ci] Update report'
           draft: false
       - name: Approve Pull Request
