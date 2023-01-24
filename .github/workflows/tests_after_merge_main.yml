@@ -1,0 +1,65 @@
+# yamllint disable rule:line-length rule:comments-indentation rule:comments
+---
+name: Coverage Tests and Bagde Generation
+
+on:
+  push:
+   branches:
+     - main
+     - master
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/INFURA
+      MIN_COVER: 80
+      PER_COVER: 95
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+          check-latest: true
+      
+      #- name: Test Build
+      #  run: |
+      #    go mod tidy
+      #    make build
+      #- name: Package Unit Tests
+      #  run: |
+      #    make tests-pkg
+      #    echo "PER_COVER=`go tool cover -func coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}'`" >> $GITHUB_ENV
+      #    make clean-tests
+
+      - name: Generate Badge
+        if: always()
+        run: |
+          git checkout -b update-badges
+          curl https://img.shields.io/badge/minimum_coverage-${{ env.MIN_COVER }}%25-yellowgreen > min-coverage.svg
+          curl https://img.shields.io/badge/current_coverage-${{ env.PER_COVER }}%25-yellowgreen > cur-coverage.svg
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+          git add cur-coverage.svg
+          git commit -m "[skip ci] Add code coverage report" || echo "allways true"
+          git git push -u update-badges
+      - name: Find Pull Request
+        uses: juliangruber/find-pull-request-action@v1
+        id: find-pull-request
+        with:
+          branch: update-badges
+      - run: echo "Pull Request ${number} (${sha})"
+        env:
+          number: ${{ steps.find-pull-request.outputs.number }}
+          sha: ${{ steps.find-pull-request.outputs.head-sha }}
+      - name: Approve Pull Request
+        uses: juliangruber/approve-pull-request-action@v2.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: env.number
+      - name: Merge Pull Request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: env.number
+          method: squash
