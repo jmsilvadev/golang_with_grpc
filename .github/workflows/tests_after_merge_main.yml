@@ -46,6 +46,8 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           title: '[skip ci] Update report'
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: update-badges
           delete-branch: true
           draft: false
