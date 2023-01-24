@@ -48,18 +48,14 @@ jobs:
         id: find-pull-request
         with:
           branch: update-badges
-      - run: echo "Pull Request ${number} (${sha})"
-        env:
-          number: ${{ steps.find-pull-request.outputs.number }}
-          sha: ${{ steps.find-pull-request.outputs.head-sha }}
       - name: Approve Pull Request
         uses: juliangruber/approve-pull-request-action@v2.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: env.number
+          number: ${{ steps.find-pull-request.outputs.number }}
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: env.number
+          number: ${{ steps.find-pull-request.outputs.number }}
           method: squash
